@@ -2,13 +2,6 @@
 
 This is a working example of a three stage secure boot chain on the nRF54LM20A: B0 (NSIB) verifying and booting MCUboot from one of two slots (S0/S1), and MCUboot verifying and booting the application. The application is blinking LED example with added support for BLE. BLE support was copied from `zephyr/samples/subsys/mgmt/mcumgr/smp_svr/src/bluetooth.c`.
 
-The two companion articles in this repo go through all of this in detail:
-
-- `docs/b0-mcuboot-integration-nrf54lm20a.md` covers why B0 and MCUboot are stacked together, the partition layout, sysbuild config, and KMU key provisioning.
-- `docs/b0-mcuboot-ble-dfu.md` covers adding BLE as a second transport so MCUboot's S0/S1 slots can be updated wirelessly, on top of the UART setup.
-
-This README explains how to run the project.
-
 ## What's actually in this project
 
 - `src/main.c` and `src/bluetooth.c`: blinks an LED and starts BLE advertising for SMP (mcumgr over BLE).
@@ -26,31 +19,19 @@ This was built using nRF Connect for VS Code. Open the project, go to the build 
 
 The settings that matter:
 
-- **SDK**: nRF Connect SDK v3.3.0
-- **Toolchain**: matching v3.3.0 toolchain
+- **SDK**: nRF Connect SDK v3.3.0 (Must be at least v3.0.0)
+- **Toolchain**: matching SDK version toolchain
 - **Board target**: `nrf54lm20dk/nrf54lm20a/cpuapp`
 - **Extra Devicetree overlay**: `boards/nrf54lm20dk.overlay` (If you don't need logging, you don't have to add this)
 - **System build (sysbuild)**: Use sysbuild
 
 Make sure to enable sysbuild so that the project build's as expected.  
 
-If you'd rather use the command line, this is the equivalent:
-
-```bash
-west build -p -b nrf54lm20dk/nrf54lm20a/cpuapp
-```
-
 ## Flashing
 
 Use **Erase and Flash to Board**, not a regular flash.
 
 This isn't optional. B0's verification depends on a public key hash sitting in the KMU before it ever runs, and that provisioning has to happen on the first flash. `sysbuild.conf` has `SB_CONFIG_SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE=y` set, which generates and pushes that keyfile into the KMU automatically, but only on a flash that actually goes through the recovery/erase path. A plain flash without erasing won't reliably provision the keys, and B0 will just refuse to boot into MCUboot if the keys aren't there.
-
-From the command line this is the same thing as:
-
-```bash
-west flash --recover
-```
 
 If you change the signing key later and reflash without erasing, expect the same failure. The old key doesn't get replaced automatically, the new one has to be provisioned again.
 
