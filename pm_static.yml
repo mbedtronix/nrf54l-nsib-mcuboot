@@ -1,0 +1,71 @@
+b0_container:
+  address: 0x0
+  region: flash_primary
+  size: 0x9000
+  span: [b0]
+b0:
+  address: 0x0
+  region: flash_primary
+  size: 0x9000
+
+s0:
+  address: 0x9000
+  region: flash_primary
+  size: 0x11000
+  span: [s0_pad, mcuboot]
+s0_pad:
+  address: 0x9000
+  region: flash_primary
+  size: 0x800
+s0_image:
+  address: 0x9800
+  region: flash_primary
+  size: 0x10800
+  span: [mcuboot]
+mcuboot:
+  address: 0x9800
+  region: flash_primary
+  size: 0x10800
+
+s1:
+  address: 0x1a000
+  region: flash_primary
+  size: 0x11000
+  span: [s1_pad, s1_image]
+s1_pad:
+  address: 0x1a000
+  region: flash_primary
+  size: 0x800
+s1_image:
+  address: 0x1a800
+  region: flash_primary
+  size: 0x10800
+
+mcuboot_primary:
+  address: 0x2b000
+  region: flash_primary
+  size: 0xdd000
+  span: [mcuboot_pad, app]
+mcuboot_pad:
+  address: 0x2b000
+  region: flash_primary
+  size: 0x800
+app:
+  address: 0x2b800
+  region: flash_primary
+  size: 0xdc800
+mcuboot_primary_app:
+  address: 0x2b800
+  region: flash_primary
+  size: 0xdc800
+  span: [app]
+
+mcuboot_secondary:
+  address: 0x108000
+  region: flash_primary
+  size: 0xdd000
+
+bootconf:
+  address: 0xffd080
+  region: bootconf
+  size: 0x4

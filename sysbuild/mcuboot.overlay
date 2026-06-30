@@ -1,0 +1,21 @@
+/ {
+    aliases {
+        mcuboot-button0 = &button1;
+        mcuboot-led0 = &led1;
+    };
+
+    chosen {
+		zephyr,console = &uart30;          
+	};
+};
+
+// Logging MCUBoot on another UART
+&uart30 {
+    status = "okay";
+
+    current-speed = <115200>;
+
+    pinctrl-0 = <&uart30_default>;
+    pinctrl-1 = <&uart30_sleep>;
+    pinctrl-names = "default", "sleep";
+};
